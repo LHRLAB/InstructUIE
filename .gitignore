@@ -139,3 +139,5 @@ exp.py
 todo
 img/
 IE_INSTRUCTIONS/
+result_*
+*.record

@@ -34,6 +34,10 @@ A sample script for training the InstructUIE model in our paper can be found at 
 bash ./scripts/train_flan-t5.sh
 ```
 
+```
+nohup bash ./scripts/train_flan-t5-base.sh >> result_train_flan-t5-base.txt 2>&1 &
+```
+
 
 ## Released Checkpoints
 

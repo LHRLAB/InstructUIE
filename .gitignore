@@ -141,3 +141,4 @@ img/
 IE_INSTRUCTIONS/
 result_*
 *.record
+eval_output/

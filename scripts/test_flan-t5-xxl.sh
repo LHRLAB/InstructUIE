@@ -13,19 +13,19 @@ port=$(shuf -i25000-30000 -n1)
 # 其余参数可与当前版本保持一致
 
 # 3090 * 4 on t5-700M
-CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 deepspeed --master_port $port src/run_uie.py \
+CUDA_VISIBLE_DEVICES=0,1,2,3 deepspeed --master_port $port src/run_uie.py \
    --do_predict \
    --predict_with_generate \
-   --model_name_or_path /root/MODELS/flan-t5-700M \
-   --resume_from_checkpoint output/t5-700M-ie-single \
-   --data_dir /workspace/IE_data_v2 \
-   --task_config_dir /workspace/InstructUIE/configs/multi_task_configs \
-   --instruction_file /workspace/InstructUIE/configs/instruction_config.json \
+   --model_name_or_path /home/luohaoran/huggingface/google/flan-t5-xxl \
+   --resume_from_checkpoint output/flan-t5-xxl-ie-single \
+   --data_dir IE_INSTRUCTIONS \
+   --task_config_dir configs/multi_task_configs \
+   --instruction_file configs/instruction_config.json \
    --instruction_strategy single \
-   --input_record_file flan-t5.record \
+   --input_record_file flan-t5-xxl_test.record \
    --per_device_eval_batch_size 16 \
    --deepspeed configs/ds_configs/stage0.config \
-   --run_name t5-700M-mult-mi-experiment \
+   --run_name flan-t5-xxl-mult-mi-experiment \
    --max_source_length 512 \
    --max_target_length 50 \
    --generation_max_length 50 \
@@ -34,4 +34,5 @@ CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 deepspeed --master_port $port src/run_uie.p
    --add_dataset_name False \
    --num_examples 0 \
    --overwrite_output_dir \
-   --overwrite_cache
+   --overwrite_cache \
+   --output_dir eval_output/flan-t5-xxl-ie-single

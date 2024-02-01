@@ -31,13 +31,12 @@ You can download the data from [Baidu NetDisk](https://pan.baidu.com/s/1R0KqeyjP
 A sample script for training the InstructUIE model in our paper can be found at [`scripts/train_flan-t5.sh`](scripts/train_flan-t5.sh). You can run it as follows:
 
 ```
-bash ./scripts/train_flan-t5.sh
-```
-
-```
 nohup bash ./scripts/train_flan-t5-base.sh >> result_train_flan-t5-base.txt 2>&1 &
 ```
 
+```
+nohup bash ./scripts/train_flan-t5-xxl.sh >> result_train_flan-t5-xxl.txt 2>&1 &
+```
 
 ## Released Checkpoints
 
@@ -49,12 +48,22 @@ We have released our 11B UIE model, click [here](https://huggingface.co/ZWK/Inst
 A sample script for evaluating the InstructUIE model in our paper can be found at [`scripts/eval_flan-t5.sh`](scripts/eval_flan-t5.sh). You can run it as follows:
 
 ```
-bash ./scripts/eval_flan-t5.sh
+nohup bash ./scripts/test_flan-t5-base.sh >> result_test_flan-t5-base.txt 2>&1 &
 ```
+
+```
+nohup bash ./scripts/test_flan-t5-xxl.sh >> result_test_flan-t5-xxl.txt 2>&1 &
+```
+
 The decoded results would save to predict_eval_predictions.jsonl in your output dir. 
 To calculate f1 with predict_eval_predictions.jsonl
+
 ```
-python calculate_f1.py
+nohup python -u src/calculate_f1.py >> result_f1_flan-t5-base.txt 2>&1 &
+```
+
+```
+nohup python src/calculate_f1.py >> result_f1_flan-t5-xxl.txt 2>&1 &
 ```
 
 ## Citation

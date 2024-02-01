@@ -14,37 +14,25 @@ port=$(shuf -i25000-30000 -n1)
 
 # 3090 * 4 on t5-700M
 CUDA_VISIBLE_DEVICES=0,1,2,3 deepspeed --master_port $port src/run_uie.py \
-   --do_train \
    --do_predict \
    --predict_with_generate \
    --model_name_or_path /home/luohaoran/huggingface/google/flan-t5-base \
+   --resume_from_checkpoint output/flan-t5-base-ie-single \
    --data_dir IE_INSTRUCTIONS \
    --task_config_dir configs/multi_task_configs \
    --instruction_file configs/instruction_config.json \
    --instruction_strategy single \
-   --output_dir output/flan-t5-base-ie-single \
-   --input_record_file flan-t5-base_train.record \
-   --per_device_train_batch_size 8 \
+   --input_record_file flan-t5-base_test.record \
    --per_device_eval_batch_size 16 \
-   --gradient_accumulation_steps 8 \
-   --learning_rate 5e-05 \
-   --num_train_epochs 10 \
    --deepspeed configs/ds_configs/stage0.config \
    --run_name flan-t5-base-mult-mi-experiment \
    --max_source_length 512 \
    --max_target_length 50 \
    --generation_max_length 50 \
-   --max_num_instances_per_task 10000 \
    --max_num_instances_per_eval_task 200 \
    --add_task_name False \
    --add_dataset_name False \
    --num_examples 0 \
    --overwrite_output_dir \
    --overwrite_cache \
-   --lr_scheduler_type constant \
-   --warmup_steps 0 \
-   --logging_strategy steps \
-   --logging_steps 500 \
-   --evaluation_strategy no \
-   --save_strategy steps \
-   --save_steps 2000
+   --output_dir eval_output/flan-t5-base-ie-single

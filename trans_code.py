@@ -292,15 +292,15 @@ def load_NER_dataset(dataset_path, labels_path, dataset_name, sampling_strategy,
     sample_template = {
         "Task": "NER", "Dataset": dataset_name, "Samples": [], "subset": subset}
 
-    labels_str = ', '.join(labels)
+    labels_str = ', '.join([f"\"{label}\"" for label in labels])
     instances = sampling_dataset(
         instances, sampling_strategy, max_num_instances)
 
     for idx, instance in enumerate(instances):
         example = sample_template.copy()
-        instruction = get_instruction('NER')
-        instruction += "Option: " + labels_str + \
-                       " \n" + "Text: " + "{0}" + " \n" + "Answer:"
+        instruction = "def name_entity_recognition(input_text):\n    \"\"\" extract named entities from the input_text . \"\"\"\n"
+        input = f"    input_text = \"{instance['sentence']}\"\n    class Entity:\n        def __init__(self, entity_text: str, entity_type: str):\n            assert entity_text in input_text\n            assert entity_type in [{labels_str}]\n            self.entity_text = entity_text\n            self.entity_type = entity_type\n    entity_list = []\n    # extracted named entities\n"
+        
         kv_pairs = []
 
         for entity in instance['entities']:
@@ -310,14 +310,14 @@ def load_NER_dataset(dataset_path, labels_path, dataset_name, sampling_strategy,
             kv_pairs.append(kv_pair)
 
         if len(kv_pairs) > 0:
-            label = " " + "; ".join(["{}: {}".format(v, k)
+            label = "\n".join([f"    entity_list.append(Entity(entity_text = \"{k}\", entity_type = \"{v}\"))"
                                      for (k, v) in kv_pairs])
         else:
-            label = " None"
+            label = "    # None"
 
         example["Instance"] = {
             "id": str(idx),
-            "sentence": instance['sentence'],
+            "sentence": input,
             "label": label,
             "ground_truth": label,
             "instruction": instruction
@@ -333,28 +333,26 @@ def load_ES_dataset(dataset_path, labels_path, dataset_name, sampling_strategy, 
     sample_template = {"Task": "ES", "Dataset": dataset_name,
                        "Samples": [], "subset": subset}
 
-    labels_str = ', '.join(labels)
     instances = sampling_dataset(
         instances, sampling_strategy, max_num_instances)
 
     for idx, instance in enumerate(instances):
         example = sample_template.copy()
-        instruction = get_instruction('ES')
-        instruction += "Option: " + labels_str + \
-            " \n" + "Text: " + "{0}" + " \n" + "Answer:"
+        instruction = "def entity_span(input_text):\n    \"\"\" extract span entities from the input_text . \"\"\"\n"
+        input = f"    input_text = \"{instance['sentence']}\"\n    class Entity_Span:\n        def __init__(self, entity_text: str):\n            assert entity_text in input_text\n            self.entity_text = entity_text\n    entity_list = []\n    # extracted span entities\n"
         entities = []
 
         for entity in instance['entities']:
             entities.append(entity["name"])
 
         if len(entities) > 0:
-            label = " " + ", ".join([entity_name for entity_name in entities])
+            label = "\n".join([f"    entity_list.append(Entity_Span(entity_text = \"{entity_name}\"))" for entity_name in entities])
         else:
-            label = " None"
+            label = "    # None"
 
         example["Instance"] = {
             "id": str(idx),
-            "sentence": instance['sentence'],
+            "sentence": input,
             "label": label,
             "ground_truth": label,
             "instruction": instruction
@@ -371,13 +369,13 @@ def load_ET_dataset(dataset_path, labels_path, dataset_name, sampling_strategy, 
     sample_template = {"Task": "ET", "Dataset": dataset_name,
                        "Samples": [], "subset": subset}
 
-    labels_str = ', '.join(labels)
+    labels_str = ', '.join([f"\"{label}\"" for label in labels])
     instances = sampling_dataset(
         instances, sampling_strategy, max_num_instances)
 
     for idx, instance in enumerate(instances):
         example = sample_template.copy()
-        instruction = get_instruction('ET')
+
         entities = []
         kv_pairs = []
 
@@ -388,19 +386,20 @@ def load_ET_dataset(dataset_path, labels_path, dataset_name, sampling_strategy, 
             kv_pairs.append(kv_pair)
             entities.append(entity["name"])
 
-        entities_str = ", ".join([entity_name for entity_name in entities])
-        instruction += "Option: " + labels_str + " \n" + "Text: " + \
-            "{0}" + " \n" + " Entities: " + entities_str + " \n" + "Answer:"
+        entities_str = ", ".join([f"\"{entity_name}\"" for entity_name in entities])
+        
+        instruction = "def entity_typing(input_text):\n    \"\"\" type given named entities from the input_text . \"\"\"\n"
+        input = f"    input_text = \"{instance['sentence']}\"\n    class Entity:\n        def __init__(self, entity_text: str, entity_type: str):\n            assert entity_text in [{entities_str}]\n            assert entity_type in [{labels_str}]\n            self.entity_text = entity_text\n            self.entity_type = entity_type\n    entity_list = []\n    # typed named entities\n"
 
         if len(kv_pairs) > 0:
-            label = " " + "; ".join(["{}: {}".format(v, k)
+            label = "\n".join([f"    entity_list.append(Entity(entity_text = \"{k}\", entity_type = \"{v}\"))"
                                     for (k, v) in kv_pairs])
         else:
-            label = " None"
+            label = "    # None"
 
         example["Instance"] = {
             "id": str(idx),
-            "sentence": instance['sentence'],
+            "sentence": input,
             "label": label,
             "ground_truth": label,
             "instruction": instruction
@@ -416,42 +415,40 @@ def load_EP_dataset(dataset_path, labels_path, dataset_name, sampling_strategy, 
     sample_template = {"Task": "EP", "Dataset": dataset_name,
                        "Samples": [], "subset": subset}
 
-    labels_str = ', '.join(labels)
+    labels_str = ', '.join([f"\"{label}\"" for label in labels])
     instances = sampling_dataset(
         instances, sampling_strategy, max_num_instances)
 
     for idx, instance in enumerate(instances):
         example = sample_template.copy()
-        instruction = get_instruction('EP')
-        instruction += "Option: " + labels_str + \
-            " \n" + "Text: " + "{0}" + " \n" + "Answer:"
+        instruction = "def relation_triple(input_text):\n    \"\"\" extract the relations of span entities from the input text. \"\"\"\n"
+        input = f"    input_text = \"{instance['sentence']}\"\n    class Entity_Span:\n        def __init__(self, entity_text: str):\n            assert entity_text in input_text\n            self.entity_text = entity_text\n    class Relation_Triple:\n        def __init__(self, relation_type: str, head_entity: Entity_Span, tail_entity: Entity_Span):\n            assert relation_type in [{labels_str}]\n            self.relation_type = relation_type  \n            self.head_entity = head_entity\n            self.tail_entity = tail_entity\n    relation_list = []\n    # extracted triple relations\n"
+        
         relation_pairs = []
         ground_truth_pairs = []
 
         for relation in instance['relations']:
             if relation['type'] == 'NA' or relation['type'] == '':
                 continue
-            relation_pair = [relation['head']
-                             ['name'], relation['tail']['name']]
+            relation_pair = [relation['type'], relation['head']['name'], relation['tail']['name']]
             ground_truth_pairs.append(relation_pair)
             relation_pairs.append(relation_pair)
 
         if len(relation_pairs) > 0:
-            label = " " + "; ".join(["{}, {}".format(h, t)
-                                    for (h, t) in relation_pairs])
+            label = "\n".join([f"    relation_list.append(Relation_Triple(relation_type = \"{r}\", head_entity = Entity_Span(entity_text = \"{h}\"), tail_entity = Entity_Span(entity_text = \"{t}\")))"
+                                    for (r, h, t) in relation_pairs])
         else:
-            label = ' None'
+            label = '    # None'
 
         if len(ground_truth_pairs) > 0:
-            ground_truth = " " + \
-                "; ".join(["{}, {}".format(h, t)
-                          for (h, t) in ground_truth_pairs])
+            ground_truth = "\n".join([f"    relation_list.append(Relation_Triple(relation_type = \"{r}\", head_entity = Entity_Span(entity_text = \"{h}\"), tail_entity = Entity_Span(entity_text = \"{t}\")))"
+                            for (r, h, t) in ground_truth_pairs])
         else:
-            ground_truth = ' None'
+            ground_truth = '    # None'
 
         example["Instance"] = {
             "id": str(idx),
-            "sentence": instance['sentence'],
+            "sentence": input,
             "label": label,
             "ground_truth": ground_truth,
             "instruction": instruction
@@ -467,13 +464,13 @@ def load_EPR_dataset(dataset_path, labels_path, dataset_name, sampling_strategy,
     sample_template = {"Task": "EPR", "Dataset": dataset_name,
                        "Samples": [], "subset": subset}
 
-    labels_str = ', '.join(labels)
+    labels_str = ', '.join([f"\"{label}\"" for label in labels])
     instances = sampling_dataset(
         instances, sampling_strategy, max_num_instances)
 
     for idx, instance in enumerate(instances):
         example = sample_template.copy()
-        instruction = get_instruction('EPR')
+        
         relation_pairs = []
         entity_pairs = []
         ground_truth_pairs = []
@@ -490,21 +487,20 @@ def load_EPR_dataset(dataset_path, labels_path, dataset_name, sampling_strategy,
             relation_pairs.append(relation_pair)
             entity_pairs.append(entity_pair)
 
-        ep_name = ' ' + "; ".join(["{}, {}".format(h, t)
-                                  for (h, t) in entity_pairs])
-        instruction += "Option: " + labels_str + " \n" + "Text: " + \
-            "{0}" + " \n" + " Entity Pairs: " + ep_name + ' \n' + "Answer:"
+        ep_name = ", ".join([f"(\"{h}\", \"{t}\")" for (h, t) in entity_pairs])
+        
+        instruction =  "def relation_classification(input_text):\n    \"\"\" extract the relations of given span entity pairs from the input text. \"\"\"\n"
+        input = f"    input_text = \"{instance['sentence']}\"\n    class Entity_Span:\n        def __init__(self, entity_text: str):\n            assert entity_text in input_text\n            self.entity_text = entity_text\n    class Relation_Triple:\n        def __init__(self, relation_type: str, head_entity: Entity_Span, tail_entity: Entity_Span):\n            assert relation_type in [{labels_str}]\n            assert (head_entity.entity_text, tail_entity.entity_text) in [{ep_name}]\n            self.relation_type = relation_type  \n            self.head_entity = head_entity\n            self.tail_entity = tail_entity\n    relation_list = []\n    # extracted triple relations\n"
 
         if len(relation_pairs) > 0:
-            label = ' ' + "; ".join(["{}: {}, {}".format(r, h, t)
+            label = "\n".join([f"    relation_list.append(Relation_Triple(relation_type = \"{r}\", head_entity = Entity_Span(entity_text = \"{h}\"), tail_entity = Entity_Span(entity_text = \"{t}\")))"
                                     for (h, r, t) in relation_pairs])
         else:
-            label = ' None'
+            label = '    # None'
 
         if len(ground_truth_pairs) > 0:
-            ground_truth = ' ' + \
-                "; ".join(["{}: {}, {}".format(r, h, t)
-                          for (h, r, t) in ground_truth_pairs])
+            ground_truth = "\n".join([f"    relation_list.append(Relation_Triple(relation_type = \"{r}\", head_entity = Entity_Span(entity_text = \"{h}\"), tail_entity = Entity_Span(entity_text = \"{t}\")))"
+                                    for (h, r, t) in ground_truth_pairs])
         else:
             logger.error("******Error item: {}******".format(instance))
             raise Exception(
@@ -512,7 +508,7 @@ def load_EPR_dataset(dataset_path, labels_path, dataset_name, sampling_strategy,
 
         example["Instance"] = {
             "id": str(idx),
-            "sentence": instance['sentence'],
+            "sentence": input,
             "label": label,
             "ground_truth": ground_truth,
             "instruction": instruction
@@ -527,15 +523,14 @@ def load_RE_dataset(dataset_path, labels_path, dataset_name, sampling_strategy, 
     sample_template = {"Task": "RE", "Dataset": dataset_name,
                        "Samples": [], "subset": subset}
 
-    labels_str = ', '.join(labels)
+    labels_str = ', '.join([f"\"{label}\"" for label in labels])
     instances = sampling_dataset(
         instances, sampling_strategy, max_num_instances)
 
     for idx, instance in enumerate(instances):
         example = sample_template.copy()
-        instruction = get_instruction('RE')
-        instruction += "Option: " + labels_str + \
-            " \n" + "Text: " + "{0}" + " \n" + "Answer:"
+        instruction = "def relation_extraction(input_text):\n    \"\"\" extract the relations of named entities from the input text. \"\"\"\n"
+        input = f"    input_text = \"{instance['sentence']}\"\n    class Entity:\n        def __init__(self, entity_text: str, entity_type: str):\n            assert entity_text in input_text\n            assert entity_type in [\"NA\"]\n            self.entity_text = entity_text\n            self.entity_type = entity_type\n    class Relation:\n        def __init__(self, relation_type: str, head_entity: Entity, tail_entity: Entity):\n            assert relation_type in [{labels_str}]\n            self.relation_type = relation_type  \n            self.head_entity = head_entity\n            self.tail_entity = tail_entity\n    relation_list = []\n    # extracted relations\n"
         relation_pairs = []
         ground_truth_pairs = []
 
@@ -550,15 +545,14 @@ def load_RE_dataset(dataset_path, labels_path, dataset_name, sampling_strategy, 
             relation_pairs.append(relation_pair)
 
         if len(relation_pairs) > 0:
-            label = ' ' + "; ".join("{}: {}, {}".format(r, h, t)
+            label = "\n".join(f"    relation_list.append(Relation(relation_type = \"{r}\", head_entity = Entity(entity_text = \"{h}\", entity_type = \"NA\"), tail_entity = Entity(entity_text = \"{t}\", entity_type = \"NA\"))"
                                     for (h, r, t) in relation_pairs)
         else:
-            label = ' None'
+            label = '    # None'
 
         if len(ground_truth_pairs) > 0:
-            ground_truth = ' ' + \
-                "; ".join("{}: {}, {}".format(r, h, t)
-                          for (h, r, t) in ground_truth_pairs)
+            ground_truth = "\n".join(f"    relation_list.append(Relation(relation_type = \"{r}\", head_entity = Entity(entity_text = \"{h}\", entity_type = \"NA\"), tail_entity = Entity(entity_text = \"{t}\", entity_type = \"NA\"))"
+                                    for (h, r, t) in ground_truth_pairs)
         else:
             logger.error("******Error item: {}******".format(instance))
             raise Exception(
@@ -566,7 +560,7 @@ def load_RE_dataset(dataset_path, labels_path, dataset_name, sampling_strategy, 
 
         example["Instance"] = {
             "id": str(idx),
-            "sentence": instance['sentence'],
+            "sentence": input,
             "label": label,
             "ground_truth": ground_truth,
             "instruction": instruction
@@ -580,17 +574,21 @@ def load_EE_dataset(dataset_path, labels_path, dataset_name, sampling_strategy, 
     sample_template = {"Task": "EE", "Dataset": dataset_name,
                        "Samples": [], "subset": subset}
 
-    # TODO, reconstruct Event Instruction to two stage
-    # TODO, check
-    labels_str = f'Event type: {labels[0]}, Arguments type: {labels[1]}.'
+    labels_str = {
+        "Event type": 
+            ", ".join([f"\"{label}\"" for label in labels[0].split(", ")]), 
+        "Arguments type": 
+            ", ".join([f"\"{label}\"" for label in labels[1].split(", ")])
+        }
     instances = sampling_dataset(
         instances, sampling_strategy, max_num_instances)
 
     for idx, instance in enumerate(instances):
         example = sample_template.copy()
-        instruction = get_instruction('EE')
-        instruction += " Option: " + labels_str + \
-            " \n" + "Text: " + "{0}" + " \n" + "Answer:"
+        instruction = "def event_extraction(input_text):\n    \"\"\" extract the events from the input text. \"\"\"\n"
+        input = f"    input_text = \"{instance['sentence']}\"\n    class Event_Trigger:\n        def __init__(self, event_type: str, trigger: str):\n            assert event_type in [{labels_str['Event type']}]\n            assert trigger in input_text\n            self.event_type = event_type\n            self.trigger = trigger\n    class Event_Argument:\n        def __init__(self, argument_name: str, argument_role: str):\n            assert argument_name in input_text\n            assert argument_role in [{labels_str['Arguments type']}]\n            self.argument_name = argument_name  \n            self.argument_role = argument_role\n    class Event:\n        def __init__(self, event_trigger: Event_Trigger, event_arguments: list):\n            self.event_trigger = event_trigger\n            self.event_arguments = event_arguments        \n    event_list = []\n    # extracted events\n"
+        
+        
         event_pairs = []
 
         for k, event in enumerate(instance['events']):
@@ -603,23 +601,23 @@ def load_EE_dataset(dataset_path, labels_path, dataset_name, sampling_strategy, 
                 continue
             event_type = event['type']
             event_trigger = event['trigger']
-            event_arguments = [" {}: {}".format(argument['name'], argument['role']) for
+            event_arguments = [f"Event_Argument(argument_name = \"{argument['name']}\", argument_role = \"{argument['role']}\")" for
                                argument in event['arguments']]
 
-            event_arguments = "None" if not event_arguments else ",".join(
+            event_arguments = "" if not event_arguments else ", ".join(
                 event_arguments)
             event_pair = [event_type, event_trigger, event_arguments]
             event_pairs.append(event_pair)
 
         if len(event_pairs) > 0:
-            label = ",".join([" ( {}: {}, {}) ".format(type, trigger, arguments)
+            label = "\n".join([f"    event_list.append(Event(event_trigger = Event_Trigger(event_type = \"{type}\", trigger = \"{trigger}\"), event_arguments = [{arguments}]))"
                               for (type, trigger, arguments) in event_pairs])
         else:
-            label = ' None'
+            label = '    # None'
 
         example["Instance"] = {
             "id": str(idx),
-            "sentence": instance['sentence'],
+            "sentence": input,
             "label": label,
             "ground_truth": label,
             "instruction": instruction
@@ -633,17 +631,15 @@ def load_EET_dataset(dataset_path, labels_path, dataset_name, sampling_strategy,
     sample_template = {"Task": "EET", "Dataset": dataset_name,
                        "Samples": [], "subset": subset}
 
-    # TODO, reconstruct Event Instruction to two stage
-    # TODO, check
-    labels_str = ", ".join(labels.keys())
+    labels_str = ", ".join([f"\"{label}\"" for label in labels.keys()])
     instances = sampling_dataset(
         instances, sampling_strategy, max_num_instances)
 
     for idx, instance in enumerate(instances):
         example = sample_template.copy()
-        instruction = get_instruction('EET')
-        instruction += " Option: " + labels_str + \
-            " \n" + "Text: " + "{0}" + " \n" + "Answer:"
+        instruction = "def event_detection(input_text):\n    \"\"\" extract the event type and its trigger word from the input text. \"\"\"\n"
+        input = f"    input_text = \"{instance['sentence']}\"\n    class Event_Trigger:\n        def __init__(self, event_type: str, trigger: str):\n            assert event_type in [{labels_str}]\n            assert trigger in input_text\n            self.event_type = event_type\n            self.trigger = trigger\n    event_trigger_list = []\n    # extracted event triggers\n"
+        
         event_pairs = []
 
         for k, event in enumerate(instance['events']):
@@ -660,14 +656,14 @@ def load_EET_dataset(dataset_path, labels_path, dataset_name, sampling_strategy,
             event_pairs.append(event_pair)
 
         if len(event_pairs) > 0:
-            label = " " + "; ".join(["{}: {}".format(type, trigger)
+            label = "\n".join([f"    event_trigger_list.append(Event_Trigger(event_type = \"{type}\", trigger = \"{trigger}\"))"
                                     for (type, trigger) in event_pairs])
         else:
-            label = ' None'
+            label = '    # None'
 
         example["Instance"] = {
             "id": str(idx),
-            "sentence": instance['sentence'],
+            "sentence": input,
             "label": label,
             "ground_truth": label,
             "instruction": instruction
@@ -681,29 +677,26 @@ def load_EEA_dataset(dataset_path, labels_path, dataset_name, sampling_strategy,
     sample_template = {"Task": "EEA", "Dataset": dataset_name,
                        "Samples": [], "subset": subset}
 
-    # TODO, reconstruct Event Instruction to two stage
-    # TODO, check
     instances = sampling_dataset(
         instances, sampling_strategy, max_num_instances)
 
     for idx, instance in enumerate(instances):
         if len(instance['events']) > 1:
             raise "Error: EEA dataset should only have one event."
-        labels_str = ', '.join(labels[instance['events'][0]['type']])
+        labels_str = ', '.join([f"\"{label}\"" for label in labels[instance['events'][0]['type']]])
         example = sample_template.copy()
-        instruction = get_instruction('EEA')
-        instruction += "Event type: " + instance['events'][0][
-            'type'] + " \n " + " Option: " + labels_str + " \n" + "Text: " + "{0}" + " \n" + "Answer:"
-
         event = instance['events'][0]
-        event_arguments = [" {}: {}".format(argument['name'], argument['role']) for
-                           argument in event['arguments']]
 
-        label = " None" if not event_arguments else ";".join(event_arguments)
+        instruction = "def event_arguments_extraction(input_text):\n    \"\"\" extract the event arguments with given event type and trigger from the input text. \"\"\"\n"
+        input = f"    input_text = \"{instance['sentence']}\"\n    class Event_Trigger:\n        def __init__(self, event_type: str, trigger: str):\n            assert trigger in input_text\n            self.event_type = event_type\n            self.trigger = trigger\n    class Event_Argument:\n        def __init__(self, argument_name: str, argument_role: str):\n            self.event = Event_Trigger(event_type = \"{event['type']}\", trigger = \"{event['trigger']}\")\n            assert argument_name in input_text\n            assert argument_role in [{labels_str}]\n            self.argument_name = argument_name  \n            self.argument_role = argument_role\n    event_argument_list = []\n    # extracted event arguments\n"
+        
+        event_arguments = [f"    event_argument_list.append(Event_Argument(argument_name = \"{argument['name']}\", argument_role = \"{argument['role']}\"))".format(argument['name'], argument['role']) for
+                           argument in event['arguments']]
+        label = "    # None" if not event_arguments else "\n".join(event_arguments)
 
         example["Instance"] = {
             "id": str(idx),
-            "sentence": instance['sentence'],
+            "sentence": input,
             "label": label,
             "ground_truth": label,
             "instruction": instruction
@@ -820,7 +813,7 @@ if __name__ == '__main__':
     print(os.listdir("IE_INSTRUCTIONS"))
     config = UIEConfig(
         data_dir="IE_INSTRUCTIONS",
-        instruction_file="configs/instruction_config.json",
+        instruction_file="configs/instruction_config_code.json",
         instruction_strategy="single",
         task_config_dir="configs/new_multi_task_configs"
         )
@@ -829,10 +822,10 @@ if __name__ == '__main__':
     if not os.path.exists(OUTPUT_PATH):
         os.makedirs(OUTPUT_PATH)
 
-    # generate_examples(path="IE_INSTRUCTIONS", task_config=config.task_configs['train'], 
-    #                   max_num_instances_per_task=1000, subset="train", output='verbal_sft_new', zero_shot=False)
+    generate_examples(path="IE_INSTRUCTIONS", task_config=config.task_configs['train'], 
+                      max_num_instances_per_task=1000, subset="train", output='code_sft_new', zero_shot=False)
     generate_examples(path="IE_INSTRUCTIONS", task_config=config.task_configs['test'],
-                      max_num_instances_per_task=1000, subset="test", output='verbal_sft_new', zero_shot=False)
+                      max_num_instances_per_task=1000, subset="test", output='code_sft_new', zero_shot=False)
     # generate_examples(path="IE_INSTRUCTIONS", task_config=config.task_config,
     #                   max_num_instances_per_task=200, subset="test", output='zero_shot.json', zero_shot=True)
     print("exit")

@@ -142,3 +142,6 @@ IE_INSTRUCTIONS/
 result_*
 *.record
 eval_output/
+processed/
+data/
+expr/

@@ -797,7 +797,7 @@ def _get_instruction(instance):
         content = samples + content
     # TODO, fix bug
     try:
-        instruction = instruction.format(content)
+        instruction = instruction + content
     finally:
         return instruction             
                 

@@ -159,17 +159,36 @@ CUDA_VISIBLE_DEVICES=3 nohup python -u src/train_bash.py --stage sft --do_predic
 
 
 ```
-CUDA_VISIBLE_DEVICES=1 nohup python -u src/train_bash.py --stage sft --do_train --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-Python-hf --dataset code_sft_new_train --template llama2 --finetuning_type lora --lora_target q_proj,v_proj --output_dir expr/code_sft_new2/CodeLlama-13B-Python/checkpoint --overwrite_cache --per_device_train_batch_size 4 --gradient_accumulation_steps 4 --lr_scheduler_type cosine --logging_steps 10 --save_steps 1000 --learning_rate 5e-5 --num_train_epochs 5.0 --plot_loss --fp16 --overwrite_output_dir --quantization_bit 4 --max_length 4096 >> result_code_sft_new2_train_CodeLlama-2-13B-Python_qlora4_epoch5.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=0 nohup python -u src/train_bash.py --stage sft --do_train --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-Python-hf --dataset code_sft_new_train --template llama2 --finetuning_type lora --lora_target q_proj,v_proj --output_dir expr/code_sft_new2/CodeLlama-13B-Python/checkpoint --overwrite_cache --per_device_train_batch_size 4 --gradient_accumulation_steps 4 --lr_scheduler_type cosine --logging_steps 10 --save_steps 1000 --learning_rate 5e-5 --num_train_epochs 5.0 --plot_loss --fp16 --overwrite_output_dir --quantization_bit 4 --max_length 4096 >> result_code_sft_new2_train_CodeLlama-2-13B-Python_qlora4_epoch5.txt 2>&1 &
 ```
 
 ```
-CUDA_VISIBLE_DEVICES=3 nohup python -u src/train_bash.py --stage sft --do_train --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-hf --dataset code_sft_new_train --template llama2 --finetuning_type lora --lora_target q_proj,v_proj --output_dir expr/code_sft_new2/CodeLlama-13B/checkpoint --overwrite_cache --per_device_train_batch_size 4 --gradient_accumulation_steps 4 --lr_scheduler_type cosine --logging_steps 10 --save_steps 1000 --learning_rate 5e-5 --num_train_epochs 5.0 --plot_loss --fp16 --overwrite_output_dir --quantization_bit 4 --max_length 4096 >> result_code_sft_new2_train_CodeLlama-2-13B_qlora4_epoch5.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=1 nohup python -u src/train_bash.py --stage sft --do_train --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-hf --dataset code_sft_new_train --template llama2 --finetuning_type lora --lora_target q_proj,v_proj --output_dir expr/code_sft_new2/CodeLlama-13B/checkpoint --overwrite_cache --per_device_train_batch_size 4 --gradient_accumulation_steps 4 --lr_scheduler_type cosine --logging_steps 10 --save_steps 1000 --learning_rate 5e-5 --num_train_epochs 5.0 --plot_loss --fp16 --overwrite_output_dir --quantization_bit 4 --max_length 4096 >> result_code_sft_new2_train_CodeLlama-2-13B_qlora4_epoch5.txt 2>&1 &
 ```
 
 ```
-CUDA_VISIBLE_DEVICES=0 nohup python -u src/train_bash.py --stage sft --do_train --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-Python-hf --dataset code_sft_new_train --template llama2 --finetuning_type lora --lora_target q_proj,v_proj --output_dir expr/code_sft_new2/CodeLlama-13B-Python/qlora8/checkpoint --overwrite_cache --per_device_train_batch_size 4 --gradient_accumulation_steps 4 --lr_scheduler_type cosine --logging_steps 10 --save_steps 1000 --learning_rate 5e-5 --num_train_epochs 5.0 --plot_loss --fp16 --overwrite_output_dir --quantization_bit 8 --max_length 4096 >> result_code_sft_new2_train_CodeLlama-2-13B-Python_qlora8_epoch5.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=4 nohup python -u src/train_bash.py --stage sft --do_train --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-Python-hf --dataset code_sft_new_train --template llama2 --finetuning_type lora --lora_target q_proj,v_proj --output_dir expr/code_sft_new2/CodeLlama-13B-Python/qlora8/checkpoint --overwrite_cache --per_device_train_batch_size 4 --gradient_accumulation_steps 4 --lr_scheduler_type cosine --logging_steps 10 --save_steps 1000 --learning_rate 5e-5 --num_train_epochs 5.0 --plot_loss --fp16 --overwrite_output_dir --quantization_bit 8 --max_length 4096 >> result_code_sft_new2_train_CodeLlama-2-13B-Python_qlora8_epoch5.txt 2>&1 &
 ```
 
 ```
-CUDA_VISIBLE_DEVICES=4 nohup python -u src/train_bash.py --stage sft --do_train --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-hf --dataset code_sft_new_train --template llama2 --finetuning_type lora --lora_target q_proj,v_proj --output_dir expr/code_sft_new2/CodeLlama-13B/qlora8/checkpoint --overwrite_cache --per_device_train_batch_size 4 --gradient_accumulation_steps 4 --lr_scheduler_type cosine --logging_steps 10 --save_steps 1000 --learning_rate 5e-5 --num_train_epochs 5.0 --plot_loss --fp16 --overwrite_output_dir --quantization_bit 8 --max_length 4096 >> result_code_sft_new2_train_CodeLlama-2-13B_qlora8_epoch5.txt 2>&1 &
+CUDA_VISIBLE_DEVICES=5 nohup python -u src/train_bash.py --stage sft --do_train --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-hf --dataset code_sft_new_train --template llama2 --finetuning_type lora --lora_target q_proj,v_proj --output_dir expr/code_sft_new2/CodeLlama-13B/qlora8/checkpoint --overwrite_cache --per_device_train_batch_size 4 --gradient_accumulation_steps 4 --lr_scheduler_type cosine --logging_steps 10 --save_steps 1000 --learning_rate 5e-5 --num_train_epochs 5.0 --plot_loss --fp16 --overwrite_output_dir --quantization_bit 8 --max_length 4096 >> result_code_sft_new2_train_CodeLlama-2-13B_qlora8_epoch5.txt 2>&1 &
+```
+
+
+
+
+```
+CUDA_VISIBLE_DEVICES=0 nohup python -u src/train_bash.py --stage sft --do_predict --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-Python-hf --adapter_name_or_path expr/code_sft_new2/CodeLlama-13B-Python/checkpoint --dataset code_sft_new_test --template llama2 --finetuning_type lora --output_dir expr/code_sft_new2/CodeLlama-13B-Python/evaluation_small --per_device_eval_batch_size 8 --predict_with_generate --fp16 --quantization_bit 4 --max_length 4096 >> result_code_sft_new2_test_CodeLlama-13B-Python_qlora4_epoch5_small.txt 2>&1 &
+```
+
+```
+CUDA_VISIBLE_DEVICES=1 nohup python -u src/train_bash.py --stage sft --do_predict --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-hf --adapter_name_or_path expr/code_sft_new2/CodeLlama-13B/checkpoint --dataset code_sft_new_test --template llama2 --finetuning_type lora --output_dir expr/code_sft_new2/CodeLlama-13B/evaluation_small --per_device_eval_batch_size 8 --predict_with_generate --fp16 --quantization_bit 4 --max_length 4096 >> result_code_sft_new2_test_CodeLlama-13B_qlora4_epoch5_small.txt 2>&1 &
+```
+
+```
+CUDA_VISIBLE_DEVICES=4 nohup python -u src/train_bash.py --stage sft --do_predict --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-Python-hf --adapter_name_or_path expr/code_sft_new2/CodeLlama-13B-Python/qlora8/checkpoint --dataset code_sft_new_test --template llama2 --finetuning_type lora --output_dir expr/code_sft_new2/CodeLlama-13B-Python/qlora8/evaluation_small --per_device_eval_batch_size 8 --predict_with_generate --fp16 --quantization_bit 8 --max_length 4096 >> result_code_sft_new2_test_CodeLlama-13B-Python_qlora8_epoch5_small.txt 2>&1 &
+```
+
+```
+CUDA_VISIBLE_DEVICES=5 nohup python -u src/train_bash.py --stage sft --do_predict --model_name_or_path /home/luohaoran/huggingface/codellama/CodeLlama-13b-hf --adapter_name_or_path expr/code_sft_new2/CodeLlama-13B/qlora8/checkpoint --dataset code_sft_new_test --template llama2 --finetuning_type lora --output_dir expr/code_sft_new2/CodeLlama-13B/qlora8/evaluation_small --per_device_eval_batch_size 8 --predict_with_generate --fp16 --quantization_bit 8 --max_length 4096 >> result_code_sft_new2_test_CodeLlama-13B_qlora8_epoch5_small.txt 2>&1 &
 ```

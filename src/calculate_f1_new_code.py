@@ -58,7 +58,7 @@ def calculate_f1(output_dir, data_dir):
                 print('%48s\t%g'%row)
 
 if __name__ == '__main__':
-    root = 'expr/code_sft_new2/CodeLlama-13B-Python/evaluation_small'
+    root = 'expr/code_sft_new2/CodeLlama-13B/qlora8/evaluation_small'
     os.environ['RANDOM_RECORD'] = '1'   # 是否开启随机记录
     os.environ['EXPORT_IMG'] = '0'      # 是否导出混淆矩阵图片
     calculate_f1(root, "processed/code_sft_new/test.json")
